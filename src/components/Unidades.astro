@@ -1,0 +1,84 @@
+
+<h1>Unidades</h1>
+<select name="cars" id="cars">
+</select>
+<br>
+<input type="number" id="input" value=1>
+<br>
+<select name="cars2" id="cars2">
+</select>
+<select name="cars3" id="cars3">
+</select>
+<br>
+<span id="resultado"></span>
+<script >
+    import {datos} from '../data/data.js';
+    var unidades = obtenerCategorias();
+    const buttons = document.querySelector('#cars');
+    const buttons2 = document.querySelector('#cars2');
+    const buttons3 = document.querySelector('#cars3');
+    const inputNum = document.querySelector('#input');
+    const spanResultado = document.querySelector('#resultado');
+
+    // Al iniciar crea el select con todas las categorias y sus unidades de medidas
+    window.addEventListener('load',()=>{
+        unidades.forEach( unidad => {
+            var option = document.createElement('option')
+            option.value = unidad
+            option.text = unidad
+            buttons?.appendChild(option)
+        })
+        obtenerUnidadesDeMedidas(0);
+    })
+    // obtiene todos los nombres de las propiedades del objeto base para usarlo como categorias
+    function obtenerCategorias(){
+        var arreglo = [];
+        for (var key in datos) {  
+            arreglo.push(key);
+        }
+        return arreglo;
+    }
+    function obtenerUnidadesDeMedidas(index){
+        // Limpiar Selects
+        for (let i = buttons2?.options.length; i >= 0; i--) {
+            buttons2?.remove(i);
+            buttons3?.remove(i);
+        }
+        // Cargar Selects con datos Nuevos
+        datos[unidades[index]].unidades.forEach( unidad => {
+            var option = document.createElement('option')
+            option.value = unidad
+            option.text = unidad
+            buttons2?.appendChild(option)
+        })
+        datos[unidades[index]].unidades.forEach( unidad => {
+            var option = document.createElement('option')
+            option.value = unidad
+            option.text = unidad
+            buttons3?.appendChild(option)
+        })
+    }
+    function CalcularMedidas(){
+        var Multiplo = datos[unidades[buttons.selectedIndex]].equivalencias[buttons2?.value][buttons3?.value];
+        // console.log('CATEGORIA',datos[unidades[buttons.selectedIndex]].equivalencias[buttons2?.value][buttons3?.value])
+        var Resultado =  inputNum.value * Multiplo;
+        imprimirResultado(Resultado);
+    }
+    function imprimirResultado(resultado){
+        spanResultado.textContent = `${inputNum.value} ${buttons2.value} equivale a ${resultado} ${buttons3.value}`
+    }
+    // Maneja los clics en cada botón.
+    buttons?.addEventListener('change', () => { 
+        obtenerUnidadesDeMedidas(buttons.selectedIndex);
+        spanResultado.textContent = ''
+    });
+    buttons2?.addEventListener('change', () => { 
+        CalcularMedidas();
+    });
+    buttons3?.addEventListener('change', () => { 
+        CalcularMedidas();
+    });
+    inputNum?.addEventListener('change', () => { 
+        CalcularMedidas();
+    });
+</script>
